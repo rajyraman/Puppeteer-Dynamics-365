@@ -1,0 +1,18 @@
+{
+  "name": "chromeheadless",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "dotenv": "^4.0.0",
+    "puppeteer": "^0.10.2"
+  },
+  "devDependencies": {
+    "gm": "^1.23.0"
+  }
+}

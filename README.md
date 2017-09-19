@@ -1,2 +1,9 @@
-# Puppeteer-Dynamics-365
-Sample repo to illustrate the use of puppeteer with Dynamics 365
+# Puppeteer - Dynamics 365
+
+Sample project that illustrates the use of Puppeteer with Dynamics CRM/365. Puppeteer is still in alpha (v0.10.2), and so this repo is intended as a proof of concept.
+
+This application takes screenshots of selected subgroups, forms and annotates the screenshot using imagemagick. The idea is to use this as a documentation assistance.
+
+`WORK IN PROGRESS (as of 19/09/17)`
+
+
