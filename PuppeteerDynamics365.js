@@ -1,4 +1,5 @@
-const puppeteer = require('Puppeteer'),
+const puppeteer = require('Puppeteer'), 
+fs = require('fs'),
 cp = require('child_process');
 
 
@@ -20,14 +21,15 @@ async start() {
 
     this._takeScreenshot = async (fileName, waitForNavigation) => {
         if (waitForNavigation) {
-            await this._page.waitForNavigation({ waitUntil: 'networkidle', networkIdleTimeout: 2000 });
+            await this._page.waitForNavigation({ waitUntil: 'networkidle', networkIdleTimeout: 2000, networkIdleInflight: 0 });
         }
         await this._page.screenshot({ path: fileName });
     };
 
     this._annotateScreenshot = async (label, fileName) => {
-        cp.execSync(`magick -size 600x100 -background blue -font Calibri -pointsize 40 -fill white -gravity center label:"${label}" -bordercolor red -border 8x4 -trim "${fileName}" +swap -gravity south -composite "Annotated-${fileName}"`,
+        cp.execSync(`magick -size 600x100 -background blue -font Calibri -pointsize 40 -fill white -gravity center label:"${label}" -bordercolor red -border 8x4 -trim "${fileName}" +swap -gravity south -composite "${fileName.replace('.','-Annotated.')}"`,
             { cwd: __dirname });
+        await fs.unlink(fileName,c=>console.log(`Deleted ${fileName}`));            
     };
 
     this._clickItem = async (rules, screenshotPrefs) => {
@@ -42,12 +44,16 @@ async start() {
             await this._page.click(process.env.TAB_HOME);
         }
         for (let i = 1; i <= rules.clickCount; i++) {
-            await this._page.click(selectedItemId, { delay: 500 });
+            try{
+                await this._page.click(selectedItemId, { delay: 500 });
+            }catch(e){
+                console.log(`Error during click of ${selectedItemId}`);
+            }
         }
         if (rules.waitForNav) {
             // await this._page.waitFor(4000);
             try{
-                await this._page.waitForNavigation({timeout: 6000});
+                await this._page.waitForNavigation({timeout: 8000});
             }catch(e){}
             //await this._page.waitForNavigation({waitUntil: 'networkidle', networkIdleTimeout: 2000});                                
         }
@@ -63,8 +69,18 @@ async start() {
 
     return await this.navigateTo();
 }
-async navigateTo(url) {
+async navigateTo(url) {  
     await this._page.goto(url || this._url, { waitUntil: 'networkidle' });
+    if(process.env.USER_SELECTOR
+        && process.env.PASSWORD_SELECTOR
+        && process.env.LOGIN_SUBMIT_SELECTOR){
+        await this._page.focus(process.env.USER_SELECTOR);
+        await this._page.type(process.env.USER_NAME);
+        await this._page.focus(process.env.PASSWORD_SELECTOR);
+        await this._page.type(process.env.PASSWORD);
+        await this._page.click(process.env.LOGIN_SUBMIT_SELECTOR, { delay: 500 });
+        await this._page.waitForNavigation({ waitUntil: 'networkidle', networkIdleTimeout: 2000 });
+    }
     let mainFrame = this._page.mainFrame();
     let childFrames = mainFrame.childFrames();
     //dismiss any popups

@@ -6,18 +6,15 @@ require('dotenv').config();
   const pup = new PuppeteerDynamics365(process.env.CRM_URL);
   try{
     let groups = await pup.start();
-    let subgroups = await pup.navigateToGroup(groups, 'Workspace', {annotateText:'Workspace'});
-    let commands = await pup.navigateToSubgroup(subgroups, 'Clients', {annotateText:'Clients view'});
-    console.log(commands);
-    await pup.clickCommandBarButton(commands, 'NEW', {annotateText:'Create new client', fileName: 'Create new client'});
-    let attributes = await pup.getAttributes();
-    console.log(attributes);
-    subgroups = await pup.navigateToGroup(groups, 'Settings');
-    commands = await pup.navigateToSubgroup(subgroups, 'Administration', {annotateText:'Administration area'}); 
+    let subgroups = await pup.navigateToGroup(groups, 'Settings');
+    let commands = await pup.navigateToSubgroup(subgroups, 'Administration', {annotateText:'Administration area'}); 
     
     subgroups = await pup.navigateToGroup(groups, 'Marketing');
-    await pup.navigateToSubgroup(subgroups, 'Leads', {annotateText:'View all existing active leads'});
-      
+    commands = await pup.navigateToSubgroup(subgroups, 'Leads', {annotateText:'View all existing active leads'});
+
+    await pup.clickCommandBarButton(commands, 'NEW', {annotateText:'Create new lead', fileName: 'Create new lead'});
+    let attributes = await pup.getAttributes();
+    console.log(attributes);      
   }catch(e){
     console.log(e);
   }  
