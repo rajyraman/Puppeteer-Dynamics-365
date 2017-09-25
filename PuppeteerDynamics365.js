@@ -1,7 +1,13 @@
-const puppeteer = require('Puppeteer'), 
-fs = require('fs'),
-cp = require('child_process');
+// const puppeteer = require('Puppeteer'), 
+const fs = require('fs'),
+    cp = require('child_process'),
+    path = require('path');
 
+if (process.pkg) {
+    var puppeteer = require(path.resolve(process.cwd(), 'puppeteer'));
+} else {
+    var puppeteer = require('puppeteer');
+}
 
 require('dotenv').config();
 
@@ -13,7 +19,7 @@ constructor(url) {
 
 async start() {
     this._browser = await puppeteer.launch({
-        headless: false,
+        headless: true,
         ignoreHTTPSErrors: true
     });
     this._page = await this._browser.newPage();
@@ -27,8 +33,7 @@ async start() {
     };
 
     this._annotateScreenshot = async (label, fileName) => {
-        cp.execSync(`magick -size 600x100 -background blue -font Calibri -pointsize 40 -fill white -gravity center label:"${label}" -bordercolor red -border 8x4 -trim "${fileName}" +swap -gravity south -composite "${fileName.replace('.','-Annotated.')}"`,
-            { cwd: __dirname });
+        cp.execSync(`magick -size 600x100 -background blue -font Calibri -pointsize 40 -fill white -gravity center label:"${label}" -bordercolor red -border 8x4 -trim "${fileName}" +swap -gravity south -composite "${fileName.replace('.','-Annotated.')}"`);
         await fs.unlink(fileName,c=>console.log(`Deleted ${fileName}`));            
     };
 
@@ -91,6 +96,7 @@ async navigateTo(url) {
             popup.contentDocument.querySelector('#butBegin').click();
         }
     });
+    await this._page.waitFor(process.env.TAB_HOME);
     await this._page.click(process.env.TAB_HOME);
     let groups = await this._page.evaluate(() => Array.from(document.querySelectorAll('.nav-group > .navActionButtonContainer')).map(x => ({ id: x.id, label: x.querySelector('.navActionButtonLabel').innerText })));
     await this._page.click(process.env.TAB_HOME);

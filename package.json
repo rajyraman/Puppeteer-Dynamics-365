@@ -3,13 +3,15 @@
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
+  "bin": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "build": "pkg -t node8-win32 package.json"
   },
   "author": "",
   "license": "ISC",
   "dependencies": {
     "dotenv": "^4.0.0",
+    "pkg": "^4.2.4",
     "puppeteer": "^0.10.2"
   },
   "devDependencies": {
