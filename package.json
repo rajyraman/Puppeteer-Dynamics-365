@@ -5,16 +5,15 @@
   "main": "index.js",
   "bin": "index.js",
   "scripts": {
-    "build": "pkg -t node8-win32 package.json"
+    "build": "pkg -t node8-win-x64 package.json"
   },
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "csv-parse": "^1.2.3",
     "dotenv": "^4.0.0",
     "pkg": "^4.2.4",
     "puppeteer": "^0.10.2"
   },
-  "devDependencies": {
-    "gm": "^1.23.0"
-  }
+  "devDependencies": {}
 }
