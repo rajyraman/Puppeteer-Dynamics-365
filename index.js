@@ -3,6 +3,13 @@ const PuppeteerDynamics365 = require('./puppeteerdynamics365');
 require('dotenv').config();
 
 (async () => {
+  let missingSettings = ['CRM_URL','TAB_HOME','USER_SELECTOR','USER_NAME','PASSWORD_SELECTOR','PASSWORD','LOGIN_SUBMIT_SELECTOR','RUN_SHEET_FILE']
+  .filter(s=>!process.env[s]);
+  if(missingSettings.length > 0){
+    console.log('Check if the .env file exists and the following settings exist\r\n---------------------------------');
+    console.log(missingSettings);
+    return;
+  }   
   const pup = new PuppeteerDynamics365(process.env.CRM_URL);
   try{
     let groups = await pup.start();
