@@ -51,6 +51,8 @@ class PuppeteerDynamics365 {
 
         this._clickItem = async (rules, screenshotPrefs) => {
             rules = Object.assign({ homeClick: false, waitForNav: true, clickCount: 1 }, rules);
+            console.log(`Rules\r\n---------`);
+            console.log(rules);
             let selectedItem = rules.items.find(s => s.label === rules.itemName);
             if (!selectedItem) {
                 Promise.reject(new Error('Not a valid item'));
@@ -58,20 +60,23 @@ class PuppeteerDynamics365 {
             let selectedItemId = rules.selector ? rules.selector.replace('{0}', `${selectedItem.id}`) : `#${selectedItem.id}`,
                 selectedItemLabel = selectedItem.label;
             if (rules.homeClick) {
-                await this._page.click(process.env.TAB_HOME);
+                console.log(`Click ${process.env.TAB_HOME}`);
+                await this._page.click(process.env.TAB_HOME, {delay:500});
             }
             for (let i = 1; i <= rules.clickCount; i++) {
                 try {
+                    console.log(`Click ${selectedItemId}`);
                     await this._page.click(selectedItemId, { delay: 500 });
                 } catch (e) {
-                    console.log(`Error during click of ${selectedItemId}`);
+                    console.log(`Error during click of ${selectedItemId} -> ${e}`);
                 }
             }
             if (rules.waitForNav) {
                 // await this._page.waitFor(4000);
                 try {
                     await this._page.waitForNavigation({ timeout: 8000 });
-                } catch (e) { }
+                } catch (e)  {
+                }
                 //await this._page.waitForNavigation({waitUntil: 'networkidle', networkIdleTimeout: 2000});                                
             }
             if (screenshotPrefs) {
@@ -148,11 +153,11 @@ class PuppeteerDynamics365 {
             && process.env.PASSWORD_SELECTOR
             && process.env.LOGIN_SUBMIT_SELECTOR) {
             await this._page.focus(process.env.USER_SELECTOR);
-            await this._page.type(process.env.USER_NAME);
+            await this._page.type(process.env.USER_NAME, { delay: 100 });
             await this._page.focus(process.env.PASSWORD_SELECTOR);
-            await this._page.type(process.env.PASSWORD);
+            await this._page.type(process.env.PASSWORD, { delay: 100 });
             await this._page.click(process.env.LOGIN_SUBMIT_SELECTOR, { delay: 500 });
-            await this._page.waitForNavigation({ waitUntil: 'networkidle', networkIdleTimeout: 2000 });
+            await this._page.waitForNavigation({ waitUntil: 'networkidle', networkIdleTimeout: 5000 });
         }
         let mainFrame = this._page.mainFrame();
         let childFrames = mainFrame.childFrames();
@@ -165,19 +170,25 @@ class PuppeteerDynamics365 {
             }
         });
         await this._page.waitFor(process.env.TAB_HOME);
-        await this._page.click(process.env.TAB_HOME);
+        await this._page.click(process.env.TAB_HOME, {delay:100});
         let groups = await this._page.evaluate(() => Array.from(document.querySelectorAll('.nav-group > .navActionButtonContainer')).map(x => ({ id: x.id, label: x.querySelector('.navActionButtonLabel').innerText })));
-        await this._page.click(process.env.TAB_HOME);
+        await this._page.click(process.env.TAB_HOME, {delay:100});
         if (this._steps && this._steps.length > 0) {
+            console.log(`Steps:\r\n-------`);
+            console.log(this._steps);
             let subgroups = [], commands = [];
             for (const s of this._steps) {
                 if (s.group) {
                     console.log(`navigate to group ${s.group}`);
                     subgroups = await this.navigateToGroup(groups, s.group);
+                    console.log(`subgroups:\r\n----------`);
+                    console.log(subgroups);
                 }
                 if (s.subgroup) {
                     console.log(`navigate to subgroup ${s.subgroup}`);
                     commands = await this.navigateToSubgroup(subgroups, s.subgroup, { annotateText: s.annotatetext });
+                    console.log(`commands:\r\n----------`);
+                    console.log(commands);
                 }
                 if (s.command) {
                     console.log(`click command ${s.command}`);

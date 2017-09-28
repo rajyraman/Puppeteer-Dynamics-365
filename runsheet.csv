@@ -1,5 +1,5 @@
 group,subgroup,command,annotatetext,filename
-Workspace,Clients,,Clients list,
-,,NEW,New client form,New Client Form
+Sales,Accounts,,List of accounts,
+,,NEW,New account form,New Account Form
 Settings,Administration,,Administration area,
 Marketing,Leads,,List of leads,

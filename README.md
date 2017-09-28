@@ -4,6 +4,8 @@ Sample project that illustrates the use of Puppeteer with Dynamics CRM/365. Pupp
 
 This application takes screenshots of selected subgroups, forms and annotates the screenshot using imagemagick. The idea is to use this as a documentation assistance.
 
-`WORK IN PROGRESS (as of 19/09/17)`
+Refer https://dreamingincrm.com/2017/09/26/puppeteer-and-dynamics-365/ for documentation
+
+`WORK IN PROGRESS (as of 28/09/17)`
 
 
